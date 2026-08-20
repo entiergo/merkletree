@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+
+	basic "entiergo.org/merkletree-basic"
 )
 
 var (
@@ -65,6 +67,9 @@ type MerkleTree struct {
 	// a tree with it still works.
 	hashStrategyName string
 	hashStrategy     func() hash.Hash
+	// useBasic builds the default tree through the standalone basic module.
+	// Alternate constructions and parallel builds use their specialized builders.
+	useBasic         bool
 	sort             bool
 	rfc6962          bool
 	// parallelism is the goroutine budget for building this tree, or zero to build
@@ -150,13 +155,13 @@ func (m *MerkleTree) hashInterior(left, right []byte) ([]byte, error) {
 // scratch slice first. The bytes fed to the hash are identical either way, so roots are
 // unaffected, but the concatenation is one allocation per interior node.
 func (m *MerkleTree) appendInteriorHash(h hash.Hash, dst, left, right []byte) ([]byte, error) {
-	h.Reset()
-	if m.rfc6962 {
-		if _, err := h.Write(rfc6962InteriorPrefixBytes); err != nil {
-			return nil, err
-		}
-	} else {
+	if !m.rfc6962 {
 		left, right = sortPair(m.sort, left, right)
+		return basic.AppendPair(h, dst, left, right)
+	}
+	h.Reset()
+	if _, err := h.Write(rfc6962InteriorPrefixBytes); err != nil {
+		return nil, err
 	}
 	if _, err := h.Write(left); err != nil {
 		return nil, err
@@ -355,6 +360,7 @@ func NewTree(cs []Content) (*MerkleTree, error) {
 	var defaultHashStrategy = sha256.New
 	t := &MerkleTree{
 		hashStrategy: defaultHashStrategy,
+		useBasic:     true,
 		sort:         false,
 	}
 	root, leafs, err := buildWithContent(cs, t)
@@ -414,6 +420,7 @@ type TreeOption func(*MerkleTree)
 func WithHasher(strategy func() hash.Hash) TreeOption {
 	return func(m *MerkleTree) {
 		m.hashStrategy = strategy
+		m.useBasic = false
 	}
 }
 
@@ -427,6 +434,7 @@ func WithHasher(strategy func() hash.Hash) TreeOption {
 func WithSortedSiblings() TreeOption {
 	return func(m *MerkleTree) {
 		m.sort = true
+		m.useBasic = false
 	}
 }
 
@@ -454,6 +462,7 @@ func WithSortedSiblings() TreeOption {
 func WithRFC6962() TreeOption {
 	return func(m *MerkleTree) {
 		m.rfc6962 = true
+		m.useBasic = false
 	}
 }
 
@@ -491,6 +500,7 @@ func WithParallelism(n int) TreeOption {
 			n = runtime.GOMAXPROCS(0)
 		}
 		m.parallelism = n
+		m.useBasic = false
 	}
 }
 
@@ -984,12 +994,51 @@ func buildWithContent(cs []Content, t *MerkleTree) (*Node, []*Node, error) {
 		n.Tree = t
 		leafs = append(leafs, n)
 	}
+	if t.useBasic {
+		root, err := buildFromBasic(leafs, cs, t)
+		if err != nil {
+			return nil, nil, err
+		}
+		return root, leafs, nil
+	}
 	root, err := buildIntermediate(leafs, t, h)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	return root, leafs, nil
+}
+
+// buildFromBasic adapts the basic module's default node graph to the full API's
+// nodes, which also carry content, parent pointers and a tree back-pointer.
+// The leaf nodes already contain the caller's Content and are reused directly.
+func buildFromBasic(leafs []*Node, cs []Content, t *MerkleTree) (*Node, error) {
+	contentCount := len(cs)
+	digests := make([][]byte, contentCount)
+	for i := range digests {
+		digests[i] = leafs[i].Hash
+	}
+	core, err := basic.NewTree(digests)
+	if err != nil {
+		return nil, err
+	}
+	converted := make(map[*basic.Node]*Node, len(core.Leafs)*2)
+	for i, n := range core.Leafs {
+		converted[n] = leafs[i]
+	}
+	var adapt func(*basic.Node) *Node
+	adapt = func(n *basic.Node) *Node {
+		if existing := converted[n]; existing != nil {
+			return existing
+		}
+		left, right := adapt(n.Left), adapt(n.Right)
+		parent := &Node{Tree: t, Left: left, Right: right, Hash: n.Hash}
+		left.Parent = parent
+		right.Parent = parent
+		converted[n] = parent
+		return parent
+	}
+	return adapt(core.Root), nil
 }
 
 // buildRFC6962 assembles the tree described by RFC 6962 section 2.1. The node list is

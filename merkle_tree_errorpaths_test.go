@@ -408,8 +408,8 @@ func TestContentTypeNameEdgeCases(t *testing.T) {
 		{"pointer to builtin", reflect.TypeOf(new(int)), "*int"},
 		{"unnamed struct", reflect.TypeOf(struct{ A int }{}), ""},
 		{"pointer to unnamed struct", reflect.TypeOf(&struct{ A int }{}), ""},
-		{"package type", reflect.TypeOf(TestSHA256Content{}), "github.com/cbergoon/merkletree.TestSHA256Content"},
-		{"pointer to package type", reflect.TypeOf(&TestPointerContent{}), "*github.com/cbergoon/merkletree.TestPointerContent"},
+		{"package type", reflect.TypeOf(TestSHA256Content{}), "entiergo.org/merkletree.TestSHA256Content"},
+		{"pointer to package type", reflect.TypeOf(&TestPointerContent{}), "*entiergo.org/merkletree.TestPointerContent"},
 	}
 
 	for _, tc := range cases {

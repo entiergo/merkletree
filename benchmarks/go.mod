@@ -2,12 +2,12 @@
 // not put a single dependency into merkletree itself. A nested module is excluded from
 // the parent's package list, so `go build ./...` and `go test ./...` at the root neither
 // see this directory nor acquire anything it requires.
-module github.com/cbergoon/merkletree/benchmarks
+module entiergo.org/merkletree/benchmarks
 
 go 1.25.0
 
 require (
-	github.com/cbergoon/merkletree v0.0.0
+	entiergo.org/merkletree v0.0.0
 	github.com/jvsteiner/merkle v0.0.0-20180127204300-2864125ed95b
 	github.com/onrik/gomerkle v1.0.0
 	github.com/txaty/go-merkletree v0.2.2
@@ -25,4 +25,4 @@ require (
 
 // The comparison always runs against the working tree it sits in, never a published
 // version.
-replace github.com/cbergoon/merkletree => ../
+replace entiergo.org/merkletree => ../

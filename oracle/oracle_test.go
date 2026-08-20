@@ -35,7 +35,7 @@ import (
 	"fmt"
 	"testing"
 
-	mt "github.com/cbergoon/merkletree"
+	mt "entiergo.org/merkletree"
 	"github.com/transparency-dev/merkle/compact"
 	"github.com/transparency-dev/merkle/rfc6962"
 	"github.com/transparency-dev/merkle/testonly"

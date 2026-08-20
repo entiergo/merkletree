@@ -10,7 +10,7 @@ import (
 	"sort"
 	"testing"
 
-	cb "github.com/cbergoon/merkletree"
+	cb "entiergo.org/merkletree"
 	txaty "github.com/txaty/go-merkletree"
 )
 

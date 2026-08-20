@@ -9,7 +9,7 @@ import (
 	"encoding/gob"
 	"fmt"
 
-	"github.com/cbergoon/merkletree"
+	"entiergo.org/merkletree"
 )
 
 // Record is the content stored in the trees below. Alongside the Content interface it

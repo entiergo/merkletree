@@ -31,7 +31,7 @@ import (
 	"fmt"
 	"hash"
 
-	cb "github.com/cbergoon/merkletree"
+	cb "entiergo.org/merkletree"
 	jvs "github.com/jvsteiner/merkle"
 	onrik "github.com/onrik/gomerkle"
 	txaty "github.com/txaty/go-merkletree"

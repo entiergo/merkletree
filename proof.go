@@ -190,6 +190,7 @@ func (m *MerkleTree) proofReproducesRoot(digest []byte, path [][]byte, index []i
 func configFromOptions(opts []TreeOption) (*MerkleTree, error) {
 	m := &MerkleTree{
 		hashStrategy: sha256.New,
+		useBasic:     true,
 	}
 	for _, opt := range opts {
 		if opt == nil {

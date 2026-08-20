@@ -1,7 +1,7 @@
 <h1 align="center">Merkle Tree in Golang</h1>
 <p align="center">
-<a href="https://github.com/cbergoon/merkletree/actions/workflows/ci.yml"><img src="https://github.com/cbergoon/merkletree/actions/workflows/ci.yml/badge.svg" alt="Build"></a>
-<a href="https://pkg.go.dev/github.com/cbergoon/merkletree"><img src="https://pkg.go.dev/badge/github.com/cbergoon/merkletree.svg" alt="Docs"></a>
+<a href="https://github.com/entiergo/merkletree/actions/workflows/ci.yml"><img src="https://github.com/cbergoon/merkletree/actions/workflows/ci.yml/badge.svg" alt="Build"></a>
+<a href="https://pkg.go.dev/entiergo.org/merkletree"><img src="https://pkg.go.dev/badge/github.com/cbergoon/merkletree.svg" alt="Docs"></a>
 <a href="#"><img src="https://img.shields.io/badge/version-0.5.0-brightgreen.svg" alt="Version"></a>
 </p>
 
@@ -17,7 +17,7 @@ nlog2(n) steps in the worst case.
 
 #### Documentation 
 
-See the docs [here](https://pkg.go.dev/github.com/cbergoon/merkletree).
+See the docs [here](https://pkg.go.dev/entiergo.org/merkletree).
 
 #### Constructions
 
@@ -317,7 +317,7 @@ cd benchmarks && go run ./cmd/depthchart
 
 #### Install
 ```
-go get github.com/cbergoon/merkletree
+go get entiergo.org/merkletree
 ```
 
 #### Example Usage
@@ -330,7 +330,7 @@ import (
   "errors"
   "log"
 
-  "github.com/cbergoon/merkletree"
+  "entiergo.org/merkletree"
 )
 
 //TestContent implements the Content interface provided by merkletree and represents the content stored in the tree.

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"testing"
 
-	cb "github.com/cbergoon/merkletree"
+	cb "entiergo.org/merkletree"
 )
 
 // The proof benchmarks next door report some numbers that deserve suspicion - a proof
