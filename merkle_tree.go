@@ -69,9 +69,9 @@ type MerkleTree struct {
 	hashStrategy     func() hash.Hash
 	// useBasic builds the default tree through the standalone basic module.
 	// Alternate constructions and parallel builds use their specialized builders.
-	useBasic         bool
-	sort             bool
-	rfc6962          bool
+	useBasic bool
+	sort     bool
+	rfc6962  bool
 	// parallelism is the goroutine budget for building this tree, or zero to build
 	// serially. Unlike sort and rfc6962 it does not affect the root, so it is a
 	// property of how a tree is built rather than of the tree itself, and it is
@@ -1018,7 +1018,7 @@ func buildFromBasic(leafs []*Node, cs []Content, t *MerkleTree) (*Node, error) {
 	for i := range digests {
 		digests[i] = leafs[i].Hash
 	}
-	core, err := basic.NewTree(digests)
+	core, err := basic.NewTree(digests, cs)
 	if err != nil {
 		return nil, err
 	}
