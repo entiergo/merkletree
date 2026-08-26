@@ -31,7 +31,7 @@ func TestBasicRootsMatchDefault(t *testing.T) {
 			contents[i] = basicContent(string(rune('a' + i)))
 			leaves[i], _ = contents[i].CalculateHash()
 		}
-		small, err := basic.NewTree(leaves)
+		small, err := basic.NewTree(leaves, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
